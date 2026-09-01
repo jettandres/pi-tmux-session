@@ -13,5 +13,5 @@ if [ -f "$FLAG" ]; then
 fi
 
 touch "$FLAG"
-tmux display-popup -E -w 65% -h 60% -b rounded \
+tmux display-popup -E -w 68% -h 62% -b rounded \
   "bash '$DIR/pi_usage_breakdown.sh'; rm -f '$FLAG'"

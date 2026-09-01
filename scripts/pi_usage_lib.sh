@@ -79,15 +79,15 @@ pi_usage_health_name() {
 pi_usage_sgr_fg() { printf '38;2;%d;%d;%d' $((16#${1:1:2})) $((16#${1:3:2})) $((16#${1:5:2})); }
 pi_usage_sgr_bg() { printf '48;2;%d;%d;%d' $((16#${1:1:2})) $((16#${1:3:2})) $((16#${1:5:2})); }
 
-# "1h 20m used · 2h 40m left of 4h budget" (or OVER budget)
+# "2h 44m used · 1h 15m left" (or OVER budget) — kept short to fit popup width
 pi_usage_budget_line() {
   local secs="$1" budget_min="$2" used left
   used="$(pi_usage_format_duration "$secs")"
   if [ "$secs" -lt "$((budget_min * 60))" ]; then
     left="$(pi_usage_format_duration "$((budget_min * 60 - secs))")"
-    printf '%s used · %s left of %s budget' "$used" "$left" "$(pi_usage_format_duration "$((budget_min * 60))")"
+    printf '%s used · %s left' "$used" "$left"
   else
-    printf '%s used · OVER the %s budget' "$used" "$(pi_usage_format_duration "$((budget_min * 60))")"
+    printf '%s used · OVER budget' "$used"
   fi
 }
 
