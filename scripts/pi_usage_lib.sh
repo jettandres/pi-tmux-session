@@ -73,6 +73,13 @@ pi_usage_health_name() {
 }
 
 # "1h 20m used · 2h 40m left of 4h budget" (or OVER budget)
+# hex color (#rrggbb) -> SGR attribute (38;2;r;g;b / 48;2;r;g;b)
+# tmux only parses #[...] in status-line formats, so popup content must
+# use real ANSI escapes instead.
+pi_usage_sgr_fg() { printf '38;2;%d;%d;%d' $((16#${1:1:2})) $((16#${1:3:2})) $((16#${1:5:2})); }
+pi_usage_sgr_bg() { printf '48;2;%d;%d;%d' $((16#${1:1:2})) $((16#${1:3:2})) $((16#${1:5:2})); }
+
+# "1h 20m used · 2h 40m left of 4h budget" (or OVER budget)
 pi_usage_budget_line() {
   local secs="$1" budget_min="$2" used left
   used="$(pi_usage_format_duration "$secs")"

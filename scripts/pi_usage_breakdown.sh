@@ -55,16 +55,18 @@ legend=""
 blvl=1
 IFS=',' read -r -a blims <<< "$PI_USAGE_HEALTH_LIMITS"
 for bl in "${blims[@]}"; do
-  legend+="$(pi_usage_health_icon "$blvl")<$(pi_usage_format_limit "$bl") "
+  legend+="$(pi_usage_health_icon "$blvl") <$(pi_usage_format_limit "$bl")  "
   blvl=$((blvl + 1))
 done
-legend+="$(pi_usage_health_icon "$blvl")≥$(pi_usage_format_limit "${blims[${#blims[@]} - 1]}")"
+legend+="$(pi_usage_health_icon "$blvl") ≥$(pi_usage_format_limit "${blims[${#blims[@]} - 1]}")"
 
 printf '\n'
 printf '  ─ Pi agentic usage · %s ─\n' "$(date '+%a %b %d')"
-printf '  #[fg=#1d3245,bg=%s] %s %s #[default]   %s\n' \
-  "$(pi_usage_health_color "$lvl")" "$(pi_usage_health_icon "$lvl")" \
-  "$(pi_usage_health_name "$lvl")" "$(pi_usage_budget_line "$total" "$budget_min")"
+# tmux does NOT parse #[...] styles in popup content -> use ANSI SGR
+printf '  \033[%s;%sm %s %s \033[0m  %s\n' \
+  "$(pi_usage_sgr_fg '#1d3245')" "$(pi_usage_sgr_bg "$(pi_usage_health_color "$lvl")")" \
+  "$(pi_usage_health_icon "$lvl")" "$(pi_usage_health_name "$lvl")" \
+  "$(pi_usage_budget_line "$total" "$budget_min")"
 printf '  %d session%s · idle > %sm excluded\n' \
   "${#FILES[@]}" "$([ "${#FILES[@]}" -gt 1 ] && printf s || true)" \
   "$PI_USAGE_IDLE_MIN"
