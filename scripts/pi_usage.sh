@@ -34,4 +34,10 @@ for f in "${FILES[@]}"; do
   total=$((total + a))
 done
 
-printf '#[fg=#1d3245,bg=#e2e98f] ⏱ %s agentic #[fg=#e2e98f,bg=#3b4261]' "$(pi_usage_format_duration "$total")"
+# health meter: fresh robot when nothing yet, else tiered by active time
+if [ "$total" -eq 0 ]; then lvl=0; else lvl="$(pi_usage_health_level "$total")"; fi
+
+printf '#[fg=#1d3245,bg=%s] %s %s #[fg=#e2e98f,bg=#3b4261]' \
+  "$(pi_usage_health_color "$lvl")" \
+  "$(pi_usage_health_icon "$lvl")" \
+  "$(pi_usage_format_duration "$total")"

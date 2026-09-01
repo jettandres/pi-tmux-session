@@ -4,8 +4,8 @@ A [tmux](https://github.com/tmux/tmux) plugin that tracks how long you've been
 doing agentic coding with [Pi](https://github.com/earendil-works/pi-mono) — the
 **active** time across all your Pi sessions, aggregated per day.
 
-It shows a live `⏱ 5h 12m agentic` segment in the tmux status bar and opens a
-per-session breakdown popup on a hotkey.
+It shows a live robot health meter in the tmux status bar — e.g. `󱜙 1h 20m` — and
+opens a per-session breakdown popup on a hotkey.
 
 ## What it measures
 
@@ -27,6 +27,32 @@ wall-clock elapsed time:
 Sessions are discovered from session files touched today, so **closed sessions
 count too** — it's your daily total, not just what's currently open. (Set
 `@pi-usage-scope open` to restrict to panes that are open right now.)
+
+## Health meter
+
+The robot's mood reflects how much **active** agentic time you've clocked
+today, so you can see at a glance when you're over-reliant on AI and should
+step away:
+
+| Level | Active time | Status bar | Color | Meaning |
+|---|---|---|---|---|
+| fresh | 0m | `󰚩 robot` | slate | not started yet |
+| healthy | < 1h | `󱜙 robot-happy` | green | balanced |
+| moderate | 1–2h | `󱚣 robot-excited` | yellow | getting carried away |
+| heavy | 2–4h | `󱚟 robot-confused` | orange | heavy usage, check yourself |
+| over-dependent | ≥ 4h | `󱚥 robot-love` | red | too much AI love — step away |
+
+The status bar pill takes the level's color, and the breakdown popup shows the
+level name plus your **daily budget** (`2h 30m used · 1h 29m left of 4h budget`).
+
+Thresholds are configurable — the last one is your daily budget:
+
+```tmux
+set -g @pi-usage-health-limits "60,120,240"   # minutes: <1h <2h <4h, ≥4h
+```
+
+There's also a spare `󱚡 robot-dead` icon if you ever want a harsher
+"burnt out" tier (add a 5th limit).
 
 ## Install
 
@@ -79,14 +105,15 @@ run-shell ~/.tmux/plugins/pi-tmux-session/pi-tmux-session.tmux
 | Action | Keys |
 |---|---|
 | Open / close the per-session breakdown | `prefix + P` (Esc or any key inside also closes) |
-| Live total in the status bar | `⏱ 5h 12m agentic` (refreshes every `status-interval`) |
+| Live health meter in the status bar | `󱜙 1h 20m` (robot + active time, level-colored) |
 
 The breakdown popup groups sessions by project, each session showing its start
 time and active duration:
 
 ```text
   ─ Pi agentic usage · Tue Sep 01 ─
-  ⏱ 2h 17m total · 5 sessions · idle > 10m excluded
+  󱚟 heavy   2h 30m used · 1h 29m left of 4h budget
+  5 sessions · idle > 10m excluded
 
   job-hunter  (1h 57m)
     17:04  1h 28m
@@ -95,6 +122,9 @@ time and active duration:
     18:11  10m
   Alvaro  (9m)
     18:04  9m
+
+  levels: 󱜙<1h 󱚣<2h 󱚟<4h 󱚥≥4h
+  scope: today
 ```
 
 ## How it works
@@ -133,5 +163,6 @@ scripts/
 | Option | Default | Description |
 |---|---|---|
 | `@pi-usage-idle-minutes` | `10` | gaps longer than this (minutes) are idle |
+| `@pi-usage-health-limits` | `60,120,240` | daily tier boundaries in minutes; last one is the budget |
 | `@pi-usage-scope` | `today` | `today` = all sessions today (open or closed), `open` = only panes open right now |
 | `@pi-usage-key` | `P` | key (after prefix) that toggles the breakdown popup |
