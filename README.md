@@ -30,16 +30,14 @@ count too** — it's your daily total, not just what's currently open. (Set
 
 ## Install
 
-### with tpm
+### with tpm (recommended)
 
-```sh
-ln -s ~/codes/ai-slops/pi-tmux-session ~/.tmux/plugins/pi-tmux-session
-```
+The plugin is public on GitHub: <https://github.com/jettandres/pi-tmux-session>
 
-Then in `~/.tmux.conf`:
+In `~/.tmux.conf`:
 
 ```tmux
-set -g @plugin 'pi-tmux-session'
+set -g @plugin 'jettandres/pi-tmux-session'
 
 # options (optional, shown with defaults)
 set -g @pi-usage-idle-minutes 10   # gaps longer than this (min) = idle
@@ -47,12 +45,33 @@ set -g @pi-usage-scope today       # today | open
 set -g @pi-usage-key P             # breakdown popup key (prefix + <key>)
 ```
 
-Reload: `tmux source-file ~/.tmux.conf` (or restart tmux / `prefix + I`).
+Install and reload:
+
+```sh
+~/.tmux/plugins/tpm/bin/install_plugins   # or prefix + I in tmux
+tmux source-file ~/.tmux.conf             # or restart tmux
+```
+
+### developing locally (symlink)
+
+If you're hacking on the plugin itself, clone it and symlink into tpm:
+
+```sh
+git clone https://github.com/jettandres/pi-tmux-session ~/codes/ai-slops/pi-tmux-session
+ln -s ~/codes/ai-slops/pi-tmux-session ~/.tmux/plugins/pi-tmux-session
+```
+
+Then in `~/.tmux.conf` use `set -g @plugin 'pi-tmux-session'`. Edits in the
+local checkout take effect on the next config reload — no re-clone needed.
 
 ### without tpm
 
+```sh
+git clone https://github.com/jettandres/pi-tmux-session ~/.tmux/plugins/pi-tmux-session
+```
+
 ```tmux
-run-shell ~/codes/ai-slops/pi-tmux-session/pi-tmux-session.tmux
+run-shell ~/.tmux/plugins/pi-tmux-session/pi-tmux-session.tmux
 ```
 
 ## Usage
